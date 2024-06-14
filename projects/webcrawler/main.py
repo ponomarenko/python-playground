@@ -5,7 +5,7 @@ import colorama
 from dotenv import load_dotenv
 from pathlib import Path
 from urllib.parse import urlparse, urljoin
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, UnicodeDammit
 from rich.console import Console
 from rich.table import Table
 from collections import Counter
@@ -50,11 +50,15 @@ def is_valid(url):
 
 
 def is_excluded_link(url):
-    """
-    Checks if the URL is an excluded type (email, javascript, etc.)
-    You can customize this function to add more exclusions.
-    """
-    excluded_patterns = [r"^mailto:", r"^javascript:", r"^tel:", r"^viber:"]
+    excluded_patterns = [
+        r"^mailto:",
+        r"^javascript:",
+        r"^tel:",
+        r"^viber:",
+        # Image extensions (common ones)
+        r"\.(jpg|jpeg|png|gif|bmp)$",
+    ]
+
     for pattern in excluded_patterns:
         if re.match(pattern, url, re.IGNORECASE):
             return True
@@ -74,7 +78,12 @@ def get_all_website_links(url):
         print(f"{GRAY}[!] Connection refused: {url}{RESET}")
         return []
 
-    soup = BeautifulSoup(response.content, "html.parser")
+    soup = BeautifulSoup(
+        UnicodeDammit(
+            response.content, ["latin-1", "iso-8859-1", "windows-1251"]
+        ).unicode_markup,
+        "html.parser",
+    )
 
     for tag in soup.find_all():
         tag_counts[tag.name] += 1
