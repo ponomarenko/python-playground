@@ -35,7 +35,7 @@ YELLOW = colorama.Fore.YELLOW
 
 MAX_URLS_DEFAULT = 30
 
-report_folder = "data"
+report_folder = "out-data"
 
 # initialize the set of links (unique links)
 internal_urls = set()
