@@ -8,6 +8,18 @@ __pycache__/
 /tmp
 /out-data
 
+# dependencies
+/node_modules
+
+# IDEs and editors
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.idea
+
 # C extensions
 *.so
 
