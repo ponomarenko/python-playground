@@ -2,12 +2,15 @@ import os
 import re
 import requests
 import colorama
+from dotenv import load_dotenv
 from pathlib import Path
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 from rich.console import Console
 from rich.table import Table
 from collections import Counter
+
+load_dotenv()
 
 int_ext_url_table = Table(title="Link audit report")
 
@@ -29,6 +32,8 @@ GREEN = colorama.Fore.GREEN
 GRAY = colorama.Fore.LIGHTBLACK_EX
 RESET = colorama.Fore.RESET
 YELLOW = colorama.Fore.YELLOW
+
+MAX_URLS_DEFAULT = 30
 
 report_folder = "data"
 
@@ -164,21 +169,26 @@ def show_stats():
 
 
 if __name__ == "__main__":
-    import argparse
 
-    parser = argparse.ArgumentParser(description="Link Extractor Tool with Python")
-    parser.add_argument("url", help="The URL to extract links from.")
-    parser.add_argument(
-        "-m",
-        "--max-urls",
-        help="Number of max URLs to crawl, default is 30.",
-        default=30,
-        type=int,
-    )
+    max_urls = os.getenv("MAX_URLS", MAX_URLS_DEFAULT)
+    url = os.getenv("URL")
 
-    args = parser.parse_args()
-    url = args.url
-    max_urls = args.max_urls
+    if url is None:
+        import argparse
+
+        parser = argparse.ArgumentParser(description="Link Extractor Tool with Python")
+        parser.add_argument("url", help="The URL to extract links from.")
+        parser.add_argument(
+            "-m",
+            "--max-urls",
+            help=f"Number of max URLs to crawl, default is {MAX_URLS_DEFAULT}.",
+            default=MAX_URLS_DEFAULT,
+            type=int,
+        )
+
+        args = parser.parse_args()
+        max_urls = args.max_urls
+        url = args.url
 
     # domain name of the URL without the protocol
     domain_name = urlparse(url).netloc
