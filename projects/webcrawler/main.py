@@ -56,7 +56,7 @@ def is_excluded_link(url):
         r"^tel:",
         r"^viber:",
         # Image extensions (common ones)
-        r"\.(jpg|jpeg|png|gif|bmp)$",
+        r"\.(jpg|jpeg|png|gif|bmp|svg)$",
     ]
 
     for pattern in excluded_patterns:
