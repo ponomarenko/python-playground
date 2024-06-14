@@ -113,7 +113,7 @@ def get_all_website_links(url):
     return urls
 
 
-def crawl(url, max_urls=30):
+def crawl(url, max_urls=MAX_URLS_DEFAULT):
     """
     Crawls a web page and extracts all links.
     You'll find all links in `external_urls` and `internal_urls` global set variables.
@@ -195,6 +195,6 @@ if __name__ == "__main__":
 
     Path(report_folder).mkdir(parents=True, exist_ok=True)
 
-    crawl(url, max_urls=max_urls)
+    crawl(url, max_urls=int(max_urls))
 
     show_stats()
