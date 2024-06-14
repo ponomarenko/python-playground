@@ -1,5 +1,15 @@
 # My Python Playground: Practice & Experiment
 
+## Create a Virtual Environment (venv)
+
+Python 3.3 and later come with the `venv` module for creating virtual environments. Use the following command to create a virtual environment named `venv` within your project directory:
+
+```bash
+python -m venv venv
+```
+
+Alternative (Windows): On Windows, you might need to use `py -3 -m venv venv` if you have multiple Python versions installed.
+
 ## Install packages with pip and requirements.txt
 
 The following command installs packages in bulk according to the configuration file, `requirements.txt`. In some environments, use `pip3` instead of `pip`.
