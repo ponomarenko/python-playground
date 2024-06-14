@@ -7,12 +7,20 @@ from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup
 from rich.console import Console
 from rich.table import Table
+from collections import Counter
 
-int_ext_url_table = Table(title="Internal / External URLs")
+int_ext_url_table = Table(title="Link audit report")
 
 int_ext_url_table.add_column("Link", style="cyan", no_wrap=True)
 int_ext_url_table.add_column("Source", style="magenta")
 int_ext_url_table.add_column("Type", justify="right", style="green")
+
+tag_table = Table(title="Frequency of tags on the website")
+
+tag_table.add_column("Tag", style="cyan", no_wrap=True)
+tag_table.add_column("Count", justify="center", style="magenta")
+
+tag_counts = Counter()
 
 # init the colorama module
 colorama.init()
@@ -59,6 +67,9 @@ def get_all_website_links(url):
         return []
 
     soup = BeautifulSoup(response.content, "html.parser")
+
+    for tag in soup.find_all():
+        tag_counts[tag.name] += 1
 
     for a_tag in soup.findAll("a"):
         href = a_tag.attrs.get("href")
@@ -114,29 +125,15 @@ def crawl(url, max_urls=30):
         crawl(link, max_urls=max_urls)
 
 
-if __name__ == "__main__":
-    import argparse
+def show_stats():
+    console = Console(record=True)
 
-    parser = argparse.ArgumentParser(description="Link Extractor Tool with Python")
-    parser.add_argument("url", help="The URL to extract links from.")
-    parser.add_argument(
-        "-m",
-        "--max-urls",
-        help="Number of max URLs to crawl, default is 30.",
-        default=30,
-        type=int,
-    )
+    for tag, count in tag_counts.most_common():
+        tag_table.add_row(tag, str(count))
 
-    args = parser.parse_args()
-    url = args.url
-    max_urls = args.max_urls
+    console.print(tag_table)
 
-    # domain name of the URL without the protocol
-    domain_name = urlparse(url).netloc
-
-    Path(report_folder).mkdir(parents=True, exist_ok=True)
-
-    crawl(url, max_urls=max_urls)
+    console.save_html(os.path.join(report_folder, f"{domain_name}_tags.html"))
 
     print("[+] Total Internal links:", len(internal_urls))
     print("[+] Total External links:", len(external_urls))
@@ -161,5 +158,33 @@ if __name__ == "__main__":
         for external_link in external_urls:
             print(external_link.strip(), file=f)
 
-    console = Console()
     console.print(int_ext_url_table)
+
+    console.save_html(os.path.join(report_folder, f"{domain_name}_links.html"))
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Link Extractor Tool with Python")
+    parser.add_argument("url", help="The URL to extract links from.")
+    parser.add_argument(
+        "-m",
+        "--max-urls",
+        help="Number of max URLs to crawl, default is 30.",
+        default=30,
+        type=int,
+    )
+
+    args = parser.parse_args()
+    url = args.url
+    max_urls = args.max_urls
+
+    # domain name of the URL without the protocol
+    domain_name = urlparse(url).netloc
+
+    Path(report_folder).mkdir(parents=True, exist_ok=True)
+
+    crawl(url, max_urls=max_urls)
+
+    show_stats()
