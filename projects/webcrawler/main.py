@@ -66,7 +66,10 @@ def get_all_website_links(url):
     response = None
 
     try:
-        response = requests.get(url)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36"
+        }
+        response = requests.get(url.strip(), headers=headers, timeout=10)
     except requests.exceptions.ConnectionError:
         print(f"{GRAY}[!] Connection refused: {url}{RESET}")
         return []
