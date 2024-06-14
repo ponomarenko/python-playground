@@ -99,6 +99,4 @@ CMD [ "python", "./your_script.py" ]
 
 > Could not install packages due to an OSError: [WinError 2] The system cannot find the file specified: 'C:\\Python312\\Scripts\\f2py.exe'
 
-Try running the command as administrator:
-or
-pip install numpy --user to install numpy without any special previlages
+Try running the command as administrator or `pip install 'package name' --user` to install numpy without any special previlages.
