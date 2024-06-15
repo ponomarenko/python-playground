@@ -4,9 +4,9 @@ __pycache__/
 *$py.class
 
 # compiled output
-/dist
-/tmp
-/out-data
+dist
+tmp
+out-data
 
 # dependencies
 /node_modules
